@@ -29,4 +29,6 @@ public class Premio {
 
     @Column(nullable = false)
     private Boolean activo = true;
+
+
 }

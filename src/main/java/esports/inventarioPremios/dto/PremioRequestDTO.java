@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EstadisticaRequestDTO {
+public class PremioRequestDTO {
     @NotBlank(message = " El tipo de premio no puede estar vacio")
     private String tipoPremio;
 
@@ -19,5 +19,6 @@ public class EstadisticaRequestDTO {
     @NotNull(message =" El monto no puede estar vacio" )
     private Integer cantidadMonto;
 
+    @NotNull(message = "el campo activo es obligatorio")
     private Boolean activo;
 }
