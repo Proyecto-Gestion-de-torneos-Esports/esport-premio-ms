@@ -44,7 +44,7 @@ public class PremioService {
 
         resultado.ifPresentOrElse(
                 dto ->log.info("Premio ID '{}' encontrado exitosamente ", id),
-                () ->log.warn("No se encontro ningun premio con el id {}", id)
+                () ->log.warn("No se encontro ningun premio con el ID: {}", id)
         );
         return resultado;
     }
@@ -66,7 +66,22 @@ public class PremioService {
     public Optional <PremioResponseDTO> actualizar(Long id, PremioRequestDTO dto){
         return premioRepository.findById(id).map(existente ->{
             log.info("Premio con el ID: '{}' fue encontrado . Actualizando sus valores",id);
-
-        })
+            existente.setTipoPremio(dto.getTipoPremio());
+            existente.setDescripcion(dto.getDescripcion());
+            existente.setCantidadMonto(dto.getCantidadMonto());
+            existente.setActivo(dto.getActivo());
+            log.info("Premio con ID: {} actualizado correctamente", id);
+            return mapToDTO(premioRepository.save(existente));
+        });
+    }
+    @Transactional(readOnly = true)
+    public void eliminar (Long id){
+        log.info("procesando solicitud para eliminar ID: '{}'", id);
+        premioRepository.findById(id).ifPresentOrElse(existente -> {
+            premioRepository.delete(existente);
+            log.info("la estadistica ID: {} fue eliminado correctamente", id);
+        },() ->{
+            log.warn("no se encontro el ID: '{}' de premio",id);
+        });
     }
 }
