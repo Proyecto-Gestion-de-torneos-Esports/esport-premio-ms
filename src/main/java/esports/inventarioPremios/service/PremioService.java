@@ -48,7 +48,7 @@ public class PremioService {
         );
         return resultado;
     }
-    @Transactional(readOnly = true)
+    @Transactional
     public PremioResponseDTO guardar (PremioRequestDTO dto){
         Premio premio = new Premio(
                 null,
@@ -62,7 +62,7 @@ public class PremioService {
         return mapToDTO(premio1);
 
     }
-    @Transactional(readOnly = true)
+    @Transactional
     public Optional <PremioResponseDTO> actualizar(Long id, PremioRequestDTO dto){
         return premioRepository.findById(id).map(existente ->{
             log.info("Premio con el ID: '{}' fue encontrado . Actualizando sus valores",id);
@@ -74,7 +74,7 @@ public class PremioService {
             return mapToDTO(premioRepository.save(existente));
         });
     }
-    @Transactional(readOnly = true)
+    @Transactional
     public void eliminar (Long id){
         log.info("procesando solicitud para eliminar ID: '{}'", id);
         premioRepository.findById(id).ifPresentOrElse(existente -> {
