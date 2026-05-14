@@ -32,7 +32,7 @@ public class PremioController {
 
        @PostMapping
        public ResponseEntity<PremioResponseDTO> guardar(@Valid @RequestBody PremioRequestDTO dto){
-            PremioResponseDTO premioCreado = premioService.guardar(dto);
+            PremioResponseDTO premioCreado = premioService.crearPremio(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(premioCreado);
        }
 
