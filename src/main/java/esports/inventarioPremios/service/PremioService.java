@@ -1,7 +1,8 @@
 package esports.inventarioPremios.service;
 
-import esports.inventarioPremios.dto.PremioRequestDTO;
-import esports.inventarioPremios.dto.PremioResponseDTO;
+import esports.inventarioPremios.client.AuditoriaClient;
+import esports.inventarioPremios.client.TorneoClient;
+import esports.inventarioPremios.dto.*;
 import esports.inventarioPremios.model.Premio;
 import esports.inventarioPremios.repository.PremioRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,14 +21,17 @@ import java.util.stream.Collectors;
 public class PremioService {
 
     private final PremioRepository premioRepository;
+    private final AuditoriaClient auditoriaClient;
+    private final TorneoClient torneoClient;
 
 
     private PremioResponseDTO mapToDTO(Premio prem){
         return new PremioResponseDTO(
-                prem.getId(),
+                prem.getPremio_id(),
                 prem.getTipoPremio(),
                 prem.getDescripcion(),
                 prem.getCantidadMonto(),
+                prem.getTorneo_id(),
                 prem.getActivo()
         );
     }
@@ -48,18 +53,33 @@ public class PremioService {
         );
         return resultado;
     }
+
     @Transactional
-    public PremioResponseDTO guardar (PremioRequestDTO dto){
-        Premio premio = new Premio(
-                null,
-                dto.getTipoPremio(),
-                dto.getDescripcion(),
-                dto.getCantidadMonto(),
-                true
+    public PremioResponseDTO crearPremio(PremioRequestDTO dto) {
+        log.info("Creando nuevo premio para el torneo ID: {}", dto.getTorneo_id());
+
+        TorneoResponseDTO torneo = torneoClient.obtenerTorneoPorId(dto.getTorneo_id());
+        // Map
+        Premio nuevoPremio = new Premio();
+        nuevoPremio.setTipoPremio(dto.getTipoPremio());
+        nuevoPremio.setDescripcion(dto.getDescripcion());
+        nuevoPremio.setCantidadMonto(dto.getCantidadMonto());
+        nuevoPremio.setTorneo_id(dto.getTorneo_id());
+
+        // Guardar
+        Premio premioGuardado = premioRepository.save(nuevoPremio);
+        log.info("Premio '{}' registrado exitosamente con ID: {}", premioGuardado.getTipoPremio(), premioGuardado.getPremio_id());
+
+        // Retornar DTO
+        return new PremioResponseDTO(
+                premioGuardado.getPremio_id(),
+                premioGuardado.getTipoPremio(),
+                premioGuardado.getDescripcion(),
+                premioGuardado.getCantidadMonto(),
+                premioGuardado.getTorneo_id(),
+                premioGuardado.getActivo()
+
         );
-        Premio premio1 = premioRepository.save(premio);
-        log.info("premio guardado correctamente ID: '{}'", premio1.getId());
-        return mapToDTO(premio1);
 
     }
     @Transactional
@@ -69,8 +89,10 @@ public class PremioService {
             existente.setTipoPremio(dto.getTipoPremio());
             existente.setDescripcion(dto.getDescripcion());
             existente.setCantidadMonto(dto.getCantidadMonto());
+            existente.setTorneo_id(dto.getTorneo_id());
             existente.setActivo(dto.getActivo());
             log.info("Premio con ID: {} actualizado correctamente", id);
+            generarAuditoria("Se actualizo Premio");
             return mapToDTO(premioRepository.save(existente));
         });
     }
@@ -80,8 +102,19 @@ public class PremioService {
         premioRepository.findById(id).ifPresentOrElse(existente -> {
             premioRepository.delete(existente);
             log.info("la estadistica ID: {} fue eliminado correctamente", id);
+            generarAuditoria("Se elimino Premio");
         },() ->{
             log.warn("no se encontro el ID: '{}' de premio",id);
         });
     }
+    public void generarAuditoria(String detalle){
+        AuditoriaRequestDTO dto = new AuditoriaRequestDTO();
+        LocalDate ahora = LocalDate.now();
+        dto.setDetalle(detalle);
+        dto.setFecha(ahora);
+
+        AuditoriaResponseDTO respuesta = auditoriaClient.generarAuditoria(dto);
+    }
+
+
 }

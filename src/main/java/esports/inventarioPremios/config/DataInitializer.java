@@ -20,11 +20,11 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Solo inserta si la tabla está completamente vacía
         if (premioRepository.count() == 0) {
-            log.info(">>> DataInitializer: Base de datos de premios vacía. Insertando inventario inicial...");
-
-            Premio premio1 = new Premio(null, "Efectivo", "Premio al primer lugar del torneo de Valorant", 10000, true);
+            log.info(">>> DataInitializer: Base de datos de premios vacía. Insertando inventario inicial...");Premio premio1 = new Premio(null, "Efectivo", "Premio al primer lugar del torneo de Valorant", 10000, true);
             Premio premio2 = new Premio(null, "Hardware", "Teclado mecánico RGB para el MVP", 5, true);
             Premio premio3 = new Premio(null, "Trofeo", "Copa dorada de campeonato clausura", 1, true);
+
+
 
             premioRepository.saveAll(List.of(premio1, premio2, premio3));
 

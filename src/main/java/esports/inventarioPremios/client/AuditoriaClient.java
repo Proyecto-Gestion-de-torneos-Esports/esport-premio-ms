@@ -1,0 +1,13 @@
+package esports.inventarioPremios.client;
+
+import esports.inventarioPremios.dto.AuditoriaRequestDTO;
+import esports.inventarioPremios.dto.AuditoriaResponseDTO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+@FeignClient(name = "auditoria-service", url = "http://localhost:8011/api/auditoria")
+public interface AuditoriaClient {
+    @PostMapping
+    public AuditoriaResponseDTO generarAuditoria(@RequestBody AuditoriaRequestDTO auditoria);
+}

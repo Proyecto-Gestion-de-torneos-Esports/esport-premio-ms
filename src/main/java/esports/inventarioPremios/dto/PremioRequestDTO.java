@@ -19,6 +19,9 @@ public class PremioRequestDTO {
     @NotNull(message =" El monto no puede estar vacio" )
     private Integer cantidadMonto;
 
+    @NotNull(message = " el ID del torneo debe ser mayor a 0")
+    private Long torneo_id;
+
     @NotNull(message = "el campo activo es obligatorio")
     private Boolean activo;
 }
