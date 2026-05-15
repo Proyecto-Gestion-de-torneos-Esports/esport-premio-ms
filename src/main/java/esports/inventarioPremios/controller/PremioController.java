@@ -23,7 +23,7 @@ public class PremioController {
             return ResponseEntity.ok(premioService.obtenertodo());
         }
 
-        @GetMapping("/{id}")
+        @GetMapping("{id}")
     public ResponseEntity<PremioResponseDTO> obtenerPorId(@PathVariable Long id){
             return premioService.obtenerPorId(id)
                     .map(ResponseEntity::ok)

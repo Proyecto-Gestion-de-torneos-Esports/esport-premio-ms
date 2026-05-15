@@ -69,6 +69,7 @@ public class PremioService {
         // Guardar
         Premio premioGuardado = premioRepository.save(nuevoPremio);
         log.info("Premio '{}' registrado exitosamente con ID: {}", premioGuardado.getTipoPremio(), premioGuardado.getPremio_id());
+        generarAuditoria("Se guardo premio");
 
         // Retornar DTO
         return new PremioResponseDTO(
