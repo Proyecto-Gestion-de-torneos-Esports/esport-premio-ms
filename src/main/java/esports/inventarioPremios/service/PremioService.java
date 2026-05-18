@@ -26,12 +26,13 @@ public class PremioService {
 
 
     private PremioResponseDTO mapToDTO(Premio prem){
+
         return new PremioResponseDTO(
-                prem.getPremio_id(),
+                prem.getPremioId(),
                 prem.getTipoPremio(),
                 prem.getDescripcion(),
                 prem.getCantidadMonto(),
-                prem.getTorneo_id(),
+                prem.getTorneoId(),
                 prem.getActivo()
         );
     }
@@ -56,28 +57,36 @@ public class PremioService {
 
     @Transactional
     public PremioResponseDTO crearPremio(PremioRequestDTO dto) {
-        log.info("Creando nuevo premio para el torneo ID: {}", dto.getTorneo_id());
+        log.info("Creando nuevo premio para el torneo ID: {}", dto.getTorneoId());
+        try{
+            var torneo =torneoClient.obtenerTorneoPorId(dto.getTorneoId());
+            if(torneo == null){
+                throw new RuntimeException("El torneo ID " + dto.getTorneoId() + "no existe");
+            }
+        }catch (Exception e){
+            throw new RuntimeException("Servicio caido o torneo no existe");
+        }
 
-        TorneoResponseDTO torneo = torneoClient.obtenerTorneoPorId(dto.getTorneo_id());
         // Map
         Premio nuevoPremio = new Premio();
         nuevoPremio.setTipoPremio(dto.getTipoPremio());
         nuevoPremio.setDescripcion(dto.getDescripcion());
         nuevoPremio.setCantidadMonto(dto.getCantidadMonto());
-        nuevoPremio.setTorneo_id(dto.getTorneo_id());
+        nuevoPremio.setTorneoId(dto.getTorneoId());
+        nuevoPremio.setActivo(dto.getActivo());
 
         // Guardar
         Premio premioGuardado = premioRepository.save(nuevoPremio);
-        log.info("Premio '{}' registrado exitosamente con ID: {}", premioGuardado.getTipoPremio(), premioGuardado.getPremio_id());
+        log.info("Premio '{}' registrado exitosamente con ID: {}", premioGuardado.getTipoPremio(), premioGuardado.getPremioId());
         generarAuditoria("Se guardo premio");
 
         // Retornar DTO
         return new PremioResponseDTO(
-                premioGuardado.getPremio_id(),
+                premioGuardado.getPremioId(),
                 premioGuardado.getTipoPremio(),
                 premioGuardado.getDescripcion(),
                 premioGuardado.getCantidadMonto(),
-                premioGuardado.getTorneo_id(),
+                premioGuardado.getTorneoId(),
                 premioGuardado.getActivo()
 
         );
@@ -90,7 +99,7 @@ public class PremioService {
             existente.setTipoPremio(dto.getTipoPremio());
             existente.setDescripcion(dto.getDescripcion());
             existente.setCantidadMonto(dto.getCantidadMonto());
-            existente.setTorneo_id(dto.getTorneo_id());
+            existente.setTorneoId(dto.getTorneoId());
             existente.setActivo(dto.getActivo());
             log.info("Premio con ID: {} actualizado correctamente", id);
             generarAuditoria("Se actualizo Premio");

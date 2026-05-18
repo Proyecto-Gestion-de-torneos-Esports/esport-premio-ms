@@ -14,7 +14,8 @@ public class Premio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long premio_id;
+    @Column(name = "premio_id")
+    private Long premioId;
 
     @Column(name = "tipo_premio", nullable = false, length = 50)
     private String tipoPremio;
@@ -23,9 +24,10 @@ public class Premio {
     private String descripcion;
 
     @Column(name = "cantidad_monto", nullable = false)
-    private Integer cantidadMonto;
+    private Double cantidadMonto;
 
-    private Long torneo_id;
+    @Column(name = "torneo_id")
+    private Long torneoId;
 
     @Column(nullable = false)
     private Boolean activo = true;

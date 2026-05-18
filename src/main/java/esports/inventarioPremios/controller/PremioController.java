@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/premio")
+@RequestMapping("/api/premios")
 @RequiredArgsConstructor
 public class PremioController {
         private final PremioService premioService;
@@ -23,7 +23,7 @@ public class PremioController {
             return ResponseEntity.ok(premioService.obtenertodo());
         }
 
-        @GetMapping("{id}")
+        @GetMapping("/{id}")
     public ResponseEntity<PremioResponseDTO> obtenerPorId(@PathVariable Long id){
             return premioService.obtenerPorId(id)
                     .map(ResponseEntity::ok)

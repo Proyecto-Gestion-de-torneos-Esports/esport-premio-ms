@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PremioResponseDTO {
-    private long premio_id;
+    private long premioId;
     private String tipoPremio;
     private String descripcion;
-    private Integer cantidadMonto;
-    private Long torneoid;
+    private Double cantidadMonto;
+    private Long torneoId;
     private boolean activo;
 }
